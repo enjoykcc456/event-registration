@@ -9,7 +9,7 @@ async function migrate() {
   try {
     await sequelize.authenticate();
     console.log("Database connection established.");
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ alter: true });
     console.log("Database schema synchronised.");
     process.exit(0);
   } catch (error) {

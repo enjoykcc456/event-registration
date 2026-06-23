@@ -7,7 +7,6 @@ import {
   Model,
   PrimaryKey,
   Table,
-  Unique,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
 import { Event } from "./event.model";
@@ -39,7 +38,6 @@ export class Registration extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   declare emailAddress: string;
 
-  @Unique("event_registrationNo")
   @Column({ type: DataType.STRING(5), allowNull: false })
   declare registrationNo: string;
 }
