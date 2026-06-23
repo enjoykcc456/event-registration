@@ -185,15 +185,13 @@ export default function EventListPage(): React.ReactElement {
             </Table>
           </TableContainer>
 
-          {totalPages > 1 && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={(_, p) => setPage(p)}
-              />
-            </Box>
-          )}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Pagination
+              count={totalPages || 1}
+              page={page}
+              onChange={(_, p) => setPage(p)}
+            />
+          </Box>
         </>
       )}
 
