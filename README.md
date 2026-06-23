@@ -140,7 +140,43 @@ Then open:
 
 ---
 
-## 6. Running Unit Tests
+## 6. API Testing with Bruno
+
+The project includes a [Bruno](https://www.usebruno.com/) collection for manual API testing.
+
+### Setup
+
+1. Install Bruno (desktop app) from https://www.usebruno.com/downloads
+2. Open Bruno → **Open Collection** → select the `bruno/` folder in this repo
+3. Select the **local** environment (top-right dropdown)
+
+### Collection Structure
+
+```
+bruno/
+├── environments/
+│   └── local.bru            ← baseUrl: http://localhost:8000
+├── admin/
+│   ├── list-events.bru      ← GET  /api/admin/events?page=1
+│   ├── create-event.bru     ← POST /api/admin/events
+│   ├── get-trend.bru        ← POST /api/admin/events/:uuid/trend
+│   └── list-employees.bru   ← GET  /api/admin/employees
+└── public/
+    ├── list-open-events.bru ← GET  /api/public/events
+    └── register.bru         ← POST /api/public/register
+```
+
+### Usage
+
+1. Start the backend (`pnpm nx serve backend`)
+2. Run **List Employees** to get employee UUIDs
+3. Use an employee UUID as `handlerUuid` in **Create Event**
+4. Run **List Events** to get event UUIDs
+5. Use an event UUID in **Get Trend** and **Register**
+
+---
+
+## 7. Running Unit Tests
 
 ```bash
 pnpm test
@@ -162,12 +198,15 @@ event-registration-system/
 │   ├── backend/                  # Express.js API (TypeScript)
 │   │   ├── src/
 │   │   │   ├── config/           # Database and logger config
+│   │   │   ├── constants/        # App constants
 │   │   │   ├── models/           # Sequelize models
-│   │   │   ├── services/         # Business logic (OneMap, event, registration)
-│   │   │   ├── routes/
-│   │   │   │   ├── admin/        # Admin API routes
-│   │   │   │   └── public/       # Public API routes
-│   │   │   ├── middleware/       # Error handler
+│   │   │   ├── middleware/       # Error handler, validation
+│   │   │   ├── modules/          # Feature modules
+│   │   │   │   ├── events/       # Events (route, controller, service, validator, typing)
+│   │   │   │   ├── registration/ # Registration module
+│   │   │   │   ├── trend/        # Trend module
+│   │   │   │   ├── employees/    # Employees module
+│   │   │   │   └── onemap/       # OneMap API integration
 │   │   │   └── database/         # Migrate and seed scripts
 │   │   └── project.json
 │   └── frontend/                 # React + Vite + Material UI (TypeScript)
@@ -177,23 +216,20 @@ event-registration-system/
 │       │       ├── admin/        # Admin portal pages
 │       │       └── public/       # Public portal pages
 │       └── project.json
+├── bruno/                        # Bruno API collection
 ├── libs/
 │   └── common/                   # Shared TypeScript DTOs
 │       └── src/index.ts
-└── plan/                         # Implementation plan
+└── docker-compose.yml
 ```
 
 ---
 
-## API Overview
+## HTTP Status Codes
 
-| Method | Endpoint                        | Description                         |
-| ------ | ------------------------------- | ----------------------------------- |
-| GET    | `/api/admin/events`             | List all events (paginated, search) |
-| POST   | `/api/admin/events`             | Create a new event                  |
-| POST   | `/api/admin/events/:uuid/trend` | Get registration trend for event    |
-| GET    | `/api/admin/employees`          | List all employees (for dropdowns)  |
-| GET    | `/api/public/events`            | List all open events                |
-| POST   | `/api/public/register`          | Register for an event               |
-
-HTTP status codes: `200` success · `400` client error · `421` validation error · `500` server error
+| Code | Meaning          |
+| ---- | ---------------- |
+| 200  | Success          |
+| 400  | Client error     |
+| 421  | Validation error |
+| 500  | Server error     |

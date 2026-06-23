@@ -1,0 +1,15 @@
+meta {
+  name: Get Trend
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/admin/events/:uuid/trend
+  body: none
+  auth: none
+}
+
+params:path {
+  uuid: ba65ba65-0dff-4ac9-bcff-63aaace68d1c
+}
