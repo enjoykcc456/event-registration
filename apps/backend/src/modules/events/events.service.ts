@@ -17,10 +17,8 @@ const PAGE_SIZE = 10;
  * @returns {number} The parsed registration count.
  */
 function getRegistrationCount(event: Event): number {
-  return parseInt(
-    String((event as unknown as { registrationCount: number }).registrationCount ?? 0),
-    10,
-  );
+  const value = event.getDataValue("registrationCount" as keyof Event);
+  return parseInt(String(value ?? 0), 10);
 }
 
 /**
