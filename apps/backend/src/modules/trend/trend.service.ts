@@ -2,17 +2,17 @@ import { col, fn } from "sequelize";
 import { ClientError } from "../../errors";
 import { Event } from "../../models/event.model";
 import { Registration } from "../../models/registration.model";
-import { TrendRow } from "./trend.typing";
+import { TrendRowDto } from "@common/types";
 
 /**
  * Calculates daily registration trend from event creation to deadline.
  * Returns cumulative and new registration counts per day.
  *
  * @param {string} eventUuid - The UUID of the event to calculate trends for.
- * @returns {Promise<TrendRow[]>} Array of daily trend rows with date, newRegistrationCount, and registrationCount.
+ * @returns {Promise<TrendRowDto[]>} Array of daily trend rows with date, newRegistrationCount, and registrationCount.
  * @throws {ClientError} If the event is not found.
  */
-export async function calculateTrend(eventUuid: string): Promise<TrendRow[]> {
+export async function calculateTrend(eventUuid: string): Promise<TrendRowDto[]> {
   const event = await Event.findByPk(eventUuid);
   if (!event) {
     throw new ClientError("Event not found");

@@ -5,7 +5,7 @@ import { ClientError } from "../../errors";
 import { Event } from "../../models/event.model";
 import { Registration } from "../../models/registration.model";
 import { isEventOpen } from "../events/events.service";
-import { RegisterResult } from "./registration.typing";
+import { RegisterResponse } from "@common/types";
 
 /**
  * Generates the next sequential 5-digit registration number for an event.
@@ -34,14 +34,14 @@ async function generateRegistrationNo(eventUuid: string): Promise<string> {
  *
  * @param {string} eventUuid - The UUID of the event to register for.
  * @param {string} emailAddress - The registrant's email address.
- * @returns {Promise<RegisterResult>} The assigned registration number.
+ * @returns {Promise<RegisterResponse>} The assigned registration number.
  * @throws {ClientError} If the event is not found.
  * @throws {ClientError} If the event is not open for registration.
  */
 export async function register(
   eventUuid: string,
   emailAddress: string,
-): Promise<RegisterResult> {
+): Promise<RegisterResponse> {
   const event = await Event.findOne({
     where: { uuid: eventUuid },
     include: [{ model: Registration, attributes: [] }],

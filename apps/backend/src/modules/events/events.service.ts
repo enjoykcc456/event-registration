@@ -5,7 +5,8 @@ import { Employee } from "../../models/employee.model";
 import { Event } from "../../models/event.model";
 import { Registration } from "../../models/registration.model";
 import { resolvePostalCode } from "../onemap/onemap.service";
-import { CreateEventData, ListEventsResult, OpenEvent } from "./events.typing";
+import { CreateEventBody } from "@common/types";
+import { ListEventsResult, OpenEvent } from "./events.typing";
 
 const PAGE_SIZE = 10;
 
@@ -167,7 +168,7 @@ export async function listOpenEvents(): Promise<OpenEvent[]> {
  * Creates a new event after validating business rules.
  * Checks unique name, handler open-event limit, and resolves postal code to address.
  *
- * @param {CreateEventData} data - The event creation payload.
+ * @param {CreateEventBody} data - The event creation payload.
  * @returns {Promise<void>}
  * @throws {ValidationError} If deadline is not before dateTime.
  * @throws {ValidationError} If event name already exists.
@@ -175,7 +176,7 @@ export async function listOpenEvents(): Promise<OpenEvent[]> {
  * @throws {ValidationError} If handler already has an open event.
  * @throws {ValidationError} If postal code cannot be resolved.
  */
-export async function createEvent(data: CreateEventData): Promise<void> {
+export async function createEvent(data: CreateEventBody): Promise<void> {
   const { name, dateTime, postalCode, deadline, capacity, handlerUuid } = data;
 
   if (new Date(deadline) >= new Date(dateTime)) {
