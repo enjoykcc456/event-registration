@@ -3,6 +3,7 @@ export interface PublicEventDto {
   name: string;
   dateTime: string;
   address: string;
+  deadline: string;
 }
 
 export type GetPublicEventsResponse = PublicEventDto[];

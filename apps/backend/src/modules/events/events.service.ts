@@ -159,6 +159,7 @@ export async function listOpenEvents(): Promise<OpenEvent[]> {
       name: e.name,
       dateTime: e.dateTime,
       address: e.address,
+      deadline: e.deadline,
     }));
 }
 

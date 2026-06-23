@@ -115,6 +115,12 @@ export default function RegisterPage(): React.ReactElement {
 
         {selectedEvent && (
           <Box sx={{ p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Event Details
+            </Typography>
+            <Typography variant="body2">
+              <strong>Name:</strong> {selectedEvent.name}
+            </Typography>
             <Typography variant="body2">
               <strong>Date & Time:</strong>{" "}
               {new Date(selectedEvent.dateTime).toLocaleString()}
@@ -122,25 +128,33 @@ export default function RegisterPage(): React.ReactElement {
             <Typography variant="body2">
               <strong>Address:</strong> {selectedEvent.address}
             </Typography>
+            <Typography variant="body2">
+              <strong>Registration Deadline:</strong>{" "}
+              {new Date(selectedEvent.deadline).toLocaleDateString()}
+            </Typography>
           </Box>
         )}
 
-        <TextField
-          label="Email Address"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        {selectedEvent && (
+          <>
+            <TextField
+              label="Email Address"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={loading || !selectedUuid}
-          startIcon={loading ? <CircularProgress size={16} /> : undefined}
-        >
-          Register
-        </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={16} /> : undefined}
+            >
+              Register
+            </Button>
+          </>
+        )}
       </Box>
     </Box>
   );

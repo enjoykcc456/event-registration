@@ -21,5 +21,6 @@ export interface OpenEvent {
   name: string;
   dateTime: Date;
   address: string;
+  deadline: Date;
 }
 
