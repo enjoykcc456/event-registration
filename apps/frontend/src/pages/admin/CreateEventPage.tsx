@@ -19,6 +19,10 @@ export default function CreateEventPage(): React.ReactElement {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  const minDateTime = now.toISOString().slice(0, 16);
+
   const [name, setName] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -102,6 +106,7 @@ export default function CreateEventPage(): React.ReactElement {
           value={dateTime}
           onChange={(e) => setDateTime(e.target.value)}
           InputLabelProps={{ shrink: true }}
+          inputProps={{ min: minDateTime }}
         />
         <TextField
           label="Postal Code"
@@ -116,6 +121,7 @@ export default function CreateEventPage(): React.ReactElement {
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
           InputLabelProps={{ shrink: true }}
+          inputProps={{ min: minDateTime }}
         />
         <TextField
           label="Capacity"
