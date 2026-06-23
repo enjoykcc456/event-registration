@@ -1,0 +1,9 @@
+{
+  "name": "common",
+  "projectType": "library",
+  "root": "libs/common",
+  "sourceRoot": "libs/common/src",
+  "targets": {
+    "build": {}
+  }
+}

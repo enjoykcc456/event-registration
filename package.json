@@ -1,0 +1,23 @@
+{
+  "name": "event-registration-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "setup": "[ -f apps/backend/.env ] || cp apps/backend/.env.example apps/backend/.env && [ -f apps/frontend/.env ] || cp apps/frontend/.env.example apps/frontend/.env",
+    "db:up": "colima start && docker-compose up -d",
+    "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
+    "db:reset": "docker-compose down -v && docker-compose up -d",
+    "dev": "nx run-many -t serve --output-style=stream --parallel=2",
+    "test": "nx run backend:test",
+    "migrate": "nx run backend:migrate",
+    "seed": "nx run backend:seed"
+  },
+  "devDependencies": {
+    "@nx/eslint": "^20.3.0",
+    "@nx/jest": "^20.3.0",
+    "@nx/js": "^20.3.0",
+    "@nx/vite": "^20.3.0",
+    "nx": "^20.3.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "frontend",
+  "projectType": "application",
+  "root": "apps/frontend",
+  "sourceRoot": "apps/frontend/src",
+  "targets": {
+    "build": {
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["common"]
+        }
+      ]
+    }
+  }
+}

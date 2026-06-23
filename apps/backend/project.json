@@ -1,0 +1,41 @@
+{
+  "name": "backend",
+  "projectType": "application",
+  "root": "apps/backend",
+  "sourceRoot": "apps/backend/src",
+  "targets": {
+    "build": {
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["common"]
+        }
+      ]
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "continuous": true,
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "test": {
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node src/database/migrate.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node src/database/seed.ts",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
