@@ -1,0 +1,17 @@
+export enum ErrorCode {
+  // Client errors (400)
+  EVENT_NOT_FOUND = "EVENT_NOT_FOUND",
+  EVENT_NOT_OPEN = "EVENT_NOT_OPEN",
+  EVENT_NAME_ALREADY_EXISTS = "EVENT_NAME_ALREADY_EXISTS",
+  HANDLER_NOT_FOUND = "HANDLER_NOT_FOUND",
+  HANDLER_HAS_OPEN_EVENT = "HANDLER_HAS_OPEN_EVENT",
+
+  // Validation errors (421)
+  DEADLINE_MUST_BE_BEFORE_EVENT = "DEADLINE_MUST_BE_BEFORE_EVENT",
+  POSTAL_CODE_NOT_FOUND = "POSTAL_CODE_NOT_FOUND",
+}
+
+export interface ErrorResponse {
+  code: ErrorCode;
+  error: string;
+}

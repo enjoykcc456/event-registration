@@ -1,6 +1,7 @@
 import { Op, WhereOptions, col, fn } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
-import { ValidationError } from "../../errors";
+import { ErrorCode } from "@common/types";
+import { ClientError, ValidationError } from "../../errors";
 import { Employee } from "../../models/employee.model";
 import { Event } from "../../models/event.model";
 import { Registration } from "../../models/registration.model";
@@ -179,22 +180,22 @@ export async function createEvent(data: CreateEventBody): Promise<void> {
   const { name, dateTime, postalCode, deadline, capacity, handlerUuid } = data;
 
   if (new Date(deadline) >= new Date(dateTime)) {
-    throw new ValidationError("deadline must be before dateTime");
+    throw new ValidationError(ErrorCode.DEADLINE_MUST_BE_BEFORE_EVENT, "deadline must be before dateTime");
   }
 
   const existing = await Event.findOne({ where: { name } });
   if (existing) {
-    throw new ValidationError(`Event name "${name}" already exists`);
+    throw new ClientError(ErrorCode.EVENT_NAME_ALREADY_EXISTS, `Event name "${name}" already exists`);
   }
 
   const handler = await Employee.findByPk(handlerUuid);
   if (!handler) {
-    throw new ValidationError("Handler employee not found");
+    throw new ClientError(ErrorCode.HANDLER_NOT_FOUND, "Handler employee not found");
   }
 
   const openCount = await getHandlerOpenEventCount(handlerUuid);
   if (openCount >= 1) {
-    throw new ValidationError("Handler already has an open event");
+    throw new ClientError(ErrorCode.HANDLER_HAS_OPEN_EVENT, "Handler already has an open event");
   }
 
   const address = await resolvePostalCode(postalCode);

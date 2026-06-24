@@ -7,12 +7,13 @@ export const listEventsValidation = [
 ];
 
 export const createEventValidation = [
-  body("name").isString().trim().notEmpty(),
-  body("dateTime").isISO8601(),
+  body("name").isString().trim().notEmpty().withMessage("Event name is required"),
+  body("dateTime").isISO8601().withMessage("Date & time must be valid"),
   body("postalCode")
     .isString()
-    .matches(/^\d{6}$/),
-  body("deadline").isISO8601(),
-  body("capacity").isInt({ min: 1 }).toInt(),
-  body("handlerUuid").isUUID(),
+    .matches(/^\d{6}$/)
+    .withMessage("Postal code must be 6 digits"),
+  body("deadline").isISO8601().withMessage("Deadline must be valid"),
+  body("capacity").isInt({ min: 1 }).toInt().withMessage("Capacity must be at least 1"),
+  body("handlerUuid").isUUID().withMessage("Handler is required"),
 ];

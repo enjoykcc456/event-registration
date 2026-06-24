@@ -23,12 +23,16 @@ export function errorHandler(
   logger.error({ message: err.message, name: err.name, stack: err.stack });
 
   if (err instanceof ValidationError) {
-    res.status(HttpStatusCode.MisdirectedRequest).json({ error: err.message });
+    res
+      .status(HttpStatusCode.MisdirectedRequest)
+      .json({ code: err.code, error: err.message });
     return;
   }
 
   if (err instanceof ClientError) {
-    res.status(HttpStatusCode.BadRequest).json({ error: err.message });
+    res
+      .status(HttpStatusCode.BadRequest)
+      .json({ code: err.code, error: err.message });
     return;
   }
 

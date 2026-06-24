@@ -1,4 +1,5 @@
-import { ValidationError } from "../../errors";
+import { ErrorCode } from "@common/types";
+import { ClientError, ValidationError } from "../../errors";
 import { Employee } from "../../models/employee.model";
 import { Event } from "../../models/event.model";
 import {
@@ -240,25 +241,25 @@ describe("events.service", () => {
       ).rejects.toThrow("deadline must be before dateTime");
     });
 
-    it("should throw ValidationError if event name already exists", async () => {
+    it("should throw ClientError if event name already exists", async () => {
       (Event.findOne as jest.Mock).mockResolvedValue({ name: "New Event" });
 
-      await expect(createEvent(validPayload)).rejects.toThrow(ValidationError);
+      await expect(createEvent(validPayload)).rejects.toThrow(ClientError);
       await expect(createEvent(validPayload)).rejects.toThrow(
         'Event name "New Event" already exists',
       );
     });
 
-    it("should throw ValidationError if handler employee not found", async () => {
+    it("should throw ClientError if handler employee not found", async () => {
       (Employee.findByPk as jest.Mock).mockResolvedValue(null);
 
-      await expect(createEvent(validPayload)).rejects.toThrow(ValidationError);
+      await expect(createEvent(validPayload)).rejects.toThrow(ClientError);
       await expect(createEvent(validPayload)).rejects.toThrow(
         "Handler employee not found",
       );
     });
 
-    it("should throw ValidationError if handler already has an open event", async () => {
+    it("should throw ClientError if handler already has an open event", async () => {
       const openEvent = createMockEvent({
         deadline: new Date("2030-12-01"),
         capacity: 100,
@@ -266,7 +267,7 @@ describe("events.service", () => {
       });
       (Event.findAll as jest.Mock).mockResolvedValue([openEvent]);
 
-      await expect(createEvent(validPayload)).rejects.toThrow(ValidationError);
+      await expect(createEvent(validPayload)).rejects.toThrow(ClientError);
       await expect(createEvent(validPayload)).rejects.toThrow(
         "Handler already has an open event",
       );
@@ -274,7 +275,10 @@ describe("events.service", () => {
 
     it("should throw ValidationError if postal code cannot be resolved", async () => {
       mockResolvePostalCode.mockRejectedValue(
-        new ValidationError("No address found for postal code: 999999"),
+        new ValidationError(
+          ErrorCode.POSTAL_CODE_NOT_FOUND,
+          "No address found for postal code: 999999",
+        ),
       );
 
       await expect(

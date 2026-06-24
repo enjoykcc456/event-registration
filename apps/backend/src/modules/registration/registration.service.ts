@@ -1,6 +1,7 @@
 import { col, fn } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 import sequelize from "../../config/database.config";
+import { ErrorCode } from "@common/types";
 import { ClientError } from "../../errors";
 import { Event } from "../../models/event.model";
 import { Registration } from "../../models/registration.model";
@@ -56,11 +57,11 @@ export async function register(
   });
 
   if (!event) {
-    throw new ClientError("Event not found");
+    throw new ClientError(ErrorCode.EVENT_NOT_FOUND, "Event not found");
   }
 
   if (!isEventOpen(event)) {
-    throw new ClientError("Event is not open for registration");
+    throw new ClientError(ErrorCode.EVENT_NOT_OPEN, "Event is not open for registration");
   }
 
   const registrationNo = await generateRegistrationNo(eventUuid);

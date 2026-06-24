@@ -24,6 +24,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getEventTrend, getEvents } from "../../api/admin";
 import type { AdminEventDto } from "../../types/admin";
+import { getErrorMessage } from "../../utils/get-error-message";
 
 const PAGE_SIZE = 10;
 
@@ -52,8 +53,8 @@ export default function EventListPage(): React.ReactElement {
       const result = await getEvents(params as never);
       setEvents(result.events);
       setTotal(result.total);
-    } catch {
-      setError("Failed to load events");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Failed to load events"));
     } finally {
       setLoading(false);
     }

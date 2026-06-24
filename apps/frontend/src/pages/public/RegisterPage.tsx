@@ -10,6 +10,7 @@ import {
 import type { PublicEventDto } from "../../types/public";
 import React, { useEffect, useState } from "react";
 import { getOpenEvents, register } from "../../api/public";
+import { getErrorMessage } from "../../utils/get-error-message";
 
 export default function RegisterPage(): React.ReactElement {
   const [events, setEvents] = useState<PublicEventDto[]>([]);
@@ -17,6 +18,7 @@ export default function RegisterPage(): React.ReactElement {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [registrationNo, setRegistrationNo] = useState("");
 
   useEffect(() => {
@@ -25,9 +27,26 @@ export default function RegisterPage(): React.ReactElement {
 
   const selectedEvent = events.find((e) => e.uuid === selectedUuid);
 
+  const validate = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
+    if (!selectedUuid) errors.eventUuid = "Please select an event";
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.emailAddress = "Valid email address is required";
+    }
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
+
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -37,20 +56,7 @@ export default function RegisterPage(): React.ReactElement {
       });
       setRegistrationNo(result.registrationNo);
     } catch (err: unknown) {
-      if (
-        err &&
-        typeof err === "object" &&
-        "response" in err &&
-        (err as { response?: { data?: { error?: string } } }).response?.data
-          ?.error
-      ) {
-        setError(
-          (err as { response: { data: { error: string } } }).response.data
-            .error,
-        );
-      } else {
-        setError("Registration failed");
-      }
+      setError(getErrorMessage(err, "Registration failed"));
     } finally {
       setLoading(false);
     }
@@ -105,6 +111,8 @@ export default function RegisterPage(): React.ReactElement {
           required
           value={selectedUuid}
           onChange={(e) => setSelectedUuid(e.target.value)}
+          error={!!fieldErrors.eventUuid}
+          helperText={fieldErrors.eventUuid}
         >
           {events.map((ev) => (
             <MenuItem key={ev.uuid} value={ev.uuid}>
@@ -143,6 +151,8 @@ export default function RegisterPage(): React.ReactElement {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={!!fieldErrors.emailAddress}
+              helperText={fieldErrors.emailAddress}
             />
 
             <Button

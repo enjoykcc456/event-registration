@@ -1,4 +1,5 @@
 import { col, fn } from "sequelize";
+import { ErrorCode } from "@common/types";
 import { ClientError } from "../../errors";
 import { Event } from "../../models/event.model";
 import { Registration } from "../../models/registration.model";
@@ -15,7 +16,7 @@ import { TrendRowDto } from "@common/types";
 export async function calculateTrend(eventUuid: string): Promise<TrendRowDto[]> {
   const event = await Event.findByPk(eventUuid);
   if (!event) {
-    throw new ClientError("Event not found");
+    throw new ClientError(ErrorCode.EVENT_NOT_FOUND, "Event not found");
   }
 
   const start = new Date(event.createdAt as unknown as Date);

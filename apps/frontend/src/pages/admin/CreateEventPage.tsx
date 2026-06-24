@@ -11,6 +11,7 @@ import type { EmployeeDto } from "../../types/admin";
 import React, { useEffect, useState } from "react";
 import { createEvent, getEmployees } from "../../api/admin";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../../utils/get-error-message";
 
 export default function CreateEventPage(): React.ReactElement {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export default function CreateEventPage(): React.ReactElement {
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   const minDateTime = now.toISOString().slice(0, 16);
 
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [name, setName] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -34,10 +36,32 @@ export default function CreateEventPage(): React.ReactElement {
     getEmployees().then(setEmployees).catch(() => {});
   }, []);
 
+  const validate = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
+    if (!name.trim()) errors.name = "Event name is required";
+    if (!dateTime) errors.dateTime = "Date & time is required";
+    if (!postalCode.match(/^\d{6}$/)) errors.postalCode = "Postal code must be 6 digits";
+    if (!deadline) errors.deadline = "Deadline is required";
+    if (!capacity || Number(capacity) < 1) errors.capacity = "Capacity must be at least 1";
+    if (!handlerUuid) errors.handlerUuid = "Handler is required";
+    if (dateTime && deadline && new Date(deadline) >= new Date(dateTime)) {
+      errors.deadline = "Deadline must be before event date";
+    }
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
     setSuccess(false);
+
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -52,20 +76,7 @@ export default function CreateEventPage(): React.ReactElement {
       setSuccess(true);
       setTimeout(() => navigate("/admin"), 1500);
     } catch (err: unknown) {
-      if (
-        err &&
-        typeof err === "object" &&
-        "response" in err &&
-        (err as { response?: { data?: { error?: string } } }).response?.data
-          ?.error
-      ) {
-        setError(
-          (err as { response: { data: { error: string } } }).response.data
-            .error,
-        );
-      } else {
-        setError("Failed to create event");
-      }
+      setError(getErrorMessage(err, "Failed to create event"));
     } finally {
       setLoading(false);
     }
@@ -98,6 +109,8 @@ export default function CreateEventPage(): React.ReactElement {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
+          error={!!fieldErrors.name}
+          helperText={fieldErrors.name}
         />
         <TextField
           label="Date & Time"
@@ -107,12 +120,16 @@ export default function CreateEventPage(): React.ReactElement {
           onChange={(e) => setDateTime(e.target.value)}
           InputLabelProps={{ shrink: true }}
           inputProps={{ min: minDateTime }}
+          error={!!fieldErrors.dateTime}
+          helperText={fieldErrors.dateTime}
         />
         <TextField
           label="Postal Code"
           required
           value={postalCode}
           onChange={(e) => setPostalCode(e.target.value)}
+          error={!!fieldErrors.postalCode}
+          helperText={fieldErrors.postalCode}
         />
         <TextField
           label="Registration Deadline"
@@ -122,6 +139,8 @@ export default function CreateEventPage(): React.ReactElement {
           onChange={(e) => setDeadline(e.target.value)}
           InputLabelProps={{ shrink: true }}
           inputProps={{ min: minDateTime }}
+          error={!!fieldErrors.deadline}
+          helperText={fieldErrors.deadline}
         />
         <TextField
           label="Capacity"
@@ -130,6 +149,8 @@ export default function CreateEventPage(): React.ReactElement {
           value={capacity}
           onChange={(e) => setCapacity(e.target.value)}
           inputProps={{ min: 1 }}
+          error={!!fieldErrors.capacity}
+          helperText={fieldErrors.capacity}
         />
         <TextField
           label="Handler"
@@ -137,6 +158,8 @@ export default function CreateEventPage(): React.ReactElement {
           required
           value={handlerUuid}
           onChange={(e) => setHandlerUuid(e.target.value)}
+          error={!!fieldErrors.handlerUuid}
+          helperText={fieldErrors.handlerUuid}
         >
           {employees.map((emp) => (
             <MenuItem key={emp.uuid} value={emp.uuid}>

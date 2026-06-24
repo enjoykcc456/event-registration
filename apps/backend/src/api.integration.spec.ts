@@ -1,3 +1,4 @@
+import { ErrorCode } from "@common/types";
 import request from "supertest";
 import app from "./app";
 import { Employee } from "./models/employee.model";
@@ -196,15 +197,19 @@ describe("API Integration Tests", () => {
       expect(res.status).toBe(421);
     });
 
-    it("should return 421 when event name already exists", async () => {
+    it("should return 400 when event name already exists", async () => {
       (Event.findOne as jest.Mock).mockResolvedValue({ name: "New Event" });
 
       const res = await request(app).post("/api/admin/events").send(validBody);
 
-      expect(res.status).toBe(421);
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty(
+        "code",
+        ErrorCode.EVENT_NAME_ALREADY_EXISTS,
+      );
     });
 
-    it("should return 421 when handler already has an open event", async () => {
+    it("should return 400 when handler already has an open event", async () => {
       const openEvent = createMockEvent({
         deadline: new Date("2030-12-01"),
         capacity: 100,
@@ -214,7 +219,8 @@ describe("API Integration Tests", () => {
 
       const res = await request(app).post("/api/admin/events").send(validBody);
 
-      expect(res.status).toBe(421);
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("code", ErrorCode.HANDLER_HAS_OPEN_EVENT);
     });
   });
 
@@ -303,6 +309,7 @@ describe("API Integration Tests", () => {
         .send(validBody);
 
       expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("code", ErrorCode.EVENT_NOT_FOUND);
       expect(res.body).toHaveProperty("error", "Event not found");
     });
 
@@ -320,6 +327,7 @@ describe("API Integration Tests", () => {
         .send(validBody);
 
       expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("code", ErrorCode.EVENT_NOT_OPEN);
       expect(res.body).toHaveProperty(
         "error",
         "Event is not open for registration",
@@ -341,6 +349,7 @@ describe("API Integration Tests", () => {
       );
 
       expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("code", ErrorCode.EVENT_NOT_FOUND);
       expect(res.body).toHaveProperty("error", "Event not found");
     });
 

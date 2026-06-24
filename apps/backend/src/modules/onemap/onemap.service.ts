@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ONEMAP_SEARCH_URL, ONEMAP_TOKEN_URL } from "../../constants/common.constants";
+import { ErrorCode } from "@common/types";
 import { ValidationError } from "../../errors";
 
 let cachedToken: string | null = null;
@@ -53,6 +54,7 @@ export async function resolvePostalCode(postalCode: string): Promise<string> {
   const results = response.data.results;
   if (!results || results.length === 0) {
     throw new ValidationError(
+      ErrorCode.POSTAL_CODE_NOT_FOUND,
       `No address found for postal code: ${postalCode}`,
     );
   }
