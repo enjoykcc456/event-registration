@@ -10,7 +10,10 @@
           "target": "build",
           "projects": ["common"]
         }
-      ]
+      ],
+      "options": {
+        "tsConfig": "apps/backend/tsconfig.app.json"
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

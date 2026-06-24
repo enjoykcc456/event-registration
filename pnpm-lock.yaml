@@ -20,6 +20,12 @@ importers:
       '@nx/vite':
         specifier: ^20.3.0
         version: 20.8.4(@babel/traverse@7.29.7)(nx@20.8.4)(typescript@5.9.3)(vite@5.4.21(@types/node@20.19.42))(vitest@3.2.6(@types/debug@4.1.13)(@types/node@20.19.42))
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      '@types/node':
+        specifier: ^20.19.42
+        version: 20.19.42
       nx:
         specifier: ^20.3.0
         version: 20.8.4

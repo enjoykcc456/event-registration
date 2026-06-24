@@ -4,8 +4,9 @@
     "outDir": "../../dist/apps/backend",
     "rootDir": "../..",
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/__tests__/**/*"]
+  "exclude": ["node_modules", "dist"]
 }
